@@ -13,7 +13,10 @@ def enhance(request):
     :return:
     """
     # Load learner from weights
-    model = learner.io.load(config.weights_path('edsr-x4'))
+    if request['fixArtifacts']:
+        model = learner.io.load(config.weights_path('wdsr-x4-fa'))
+    else:
+        model = learner.io.load(config.weights_path('edsr-x4'))
 
     # Download source image from Azure
     source_filename = request['image']['original']['filename']
@@ -42,7 +45,7 @@ def enhance(request):
                     'width': None,
                     'height': None,
                     'multiplier': '4x',
-                    'fixArtifacts': False
+                    'fixArtifacts': request['fixArtifacts']
                 }
             }
         }
