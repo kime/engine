@@ -34,3 +34,12 @@ def internal_error(message="Internal Server Error"):
     :return: 500 Internal Server Error
     """
     return jsonify({"message": message}), 500
+
+
+def not_implemented(message="Not Implemented"):
+    """
+Response given when the server lacks the ability to fulfil the request
+    :param message: explanation of the error situation
+    :return: 501 Not Implemented
+    """
+    return jsonify({"message": message}), 501
