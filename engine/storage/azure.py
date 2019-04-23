@@ -17,8 +17,7 @@ def download_image(container, blob_name):
     account_name, access_key = config.azure_storage()
     blob_service = BlockBlobService(account_name, access_key)
     blob = blob_service.get_blob_to_bytes(container, blob_name)
-    image_file_in_mem = io.BytesIO(blob.content)
-    img = Image.open(image_file_in_mem)
+    img = Image.open(io.BytesIO(blob.content))
     return img.convert('RGB') if img.mode != 'RGB' else img
 
 
