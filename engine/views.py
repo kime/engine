@@ -1,4 +1,6 @@
-from flask import Flask, Blueprint, request
+from traceback import print_stack
+
+from flask import Blueprint, request
 
 from engine import models
 from engine.responses import ok, internal_error, not_implemented
@@ -13,7 +15,9 @@ def enhance():
         return response, ok()
 
     except NotImplementedError as nie:
+        print_stack(nie)
         return not_implemented()
 
     except RuntimeError as re:
+        print_stack(re)
         return internal_error()
