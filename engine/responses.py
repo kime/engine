@@ -38,7 +38,7 @@ def internal_error(message="Internal Server Error"):
 
 def not_implemented(message="Not Implemented"):
     """
-Response given when the server lacks the ability to fulfil the request
+    Response given when the server lacks the ability to fulfil the request
     :param message: explanation of the error situation
     :return: 501 Not Implemented
     """

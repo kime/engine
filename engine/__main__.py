@@ -1,7 +1,8 @@
 import os
 
-from engine.views import engine
 from flask import Flask
+
+from engine.views import engine
 
 app = Flask(__name__)
 app.register_blueprint(engine)
