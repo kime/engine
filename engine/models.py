@@ -13,36 +13,34 @@ def enhance(request):
     :return:
     """
     # Load learner from weights
-    if request['fix_artifacts']:
+    if request['fixArtifacts']:
         model = learner.io.load(config.weights_path('wdsr-x4-fa'))
     else:
         model = learner.io.load(config.weights_path('edsr-x4'))
 
-    # Download source image from Azure
-    source_blob_name = request['image']['original']['blob_name']
-    source_image = azure.download_image('originalimages', source_blob_name)
+    try:
+        # Download source image from Azure
+        source_blob_name = request['originalImage']['blobName']
+        source_image = azure.download_image('originalimages', source_blob_name)
 
-    # Predict enhanced image
-    enhanced_image = learner.enhance(model, source_image)
+        # Predict enhanced image
+        enhanced_image = learner.enhance(model, source_image)
 
-    # Clear model from GPU memory
-    del model
-    keras.backend.clear_session()
-
-    # Upload enhanced image to Azure
-    enhanced_blob_name = source_blob_name + '-x4' + '.png'
-    azure.upload_image(enhanced_image, 'enhancedimages', enhanced_blob_name)
+        # Upload enhanced image to Azure
+        enhanced_blob_name = source_blob_name + '-x4' + '.png'
+        azure.upload_image(enhanced_image, 'enhancedimages', enhanced_blob_name)
+    finally:
+        # Clear model from GPU memory
+        del model
+        keras.backend.clear_session()
 
     return jsonify(
         {
             'id': request['id'],
-            'image': {
-                'original': request['image']['original'],
-                'enhanced': {
-                    'blob_name': enhanced_blob_name,
-                    'width': None,
-                    'height': None,
-                }
+            'enhancedImage': {
+                'blobName': enhanced_blob_name,
+                'width': enhanced_image.size[0],
+                'height': enhanced_image.size[1],
             }
         }
     )
