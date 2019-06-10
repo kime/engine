@@ -13,10 +13,16 @@ def enhance(request):
     :return:
     """
     # Load learner from weights
-    if request['fixArtifacts']:
-        model = learner.io.load(config.weights_path('wdsr-x4-fa'))
+    if request['multiplier'] == '2x':
+        if request['fixArtifacts']:
+            model = learner.io.load(config.weights_path('wdsr-x2-fa'))
+        else:
+            model = learner.io.load(config.weights_path('wdsr-x2'))
     else:
-        model = learner.io.load(config.weights_path('edsr-x4'))
+        if request['fixArtifacts']:
+            model = learner.io.load(config.weights_path('wdsr-x4-fa'))
+        else:
+            model = learner.io.load(config.weights_path('edsr-x4'))
 
     try:
         # Download source image from Azure
@@ -27,7 +33,7 @@ def enhance(request):
         enhanced_image = learner.enhance(model, source_image)
 
         # Upload enhanced image to Azure
-        enhanced_blob_name = source_blob_name + '-x4' + '.png'
+        enhanced_blob_name = source_blob_name + '-%s.png' % request['multiplier']
         azure.upload_image(enhanced_image, 'enhancedimages', enhanced_blob_name)
     finally:
         # Clear model from GPU memory
